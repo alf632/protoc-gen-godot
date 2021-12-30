@@ -1,0 +1,5 @@
+extends Reference
+
+{{- range $class := .}}
+const {{$class.Name}} = preload("{{$class.Name}}.gd")
+{{- end}}

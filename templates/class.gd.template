@@ -1,0 +1,11 @@
+extends Reference
+# Class: {{.Name}}
+
+{{- range $val := .Parameter}}
+var {{$val}} setget {{$val}}_set, {{$val}}_get
+func {{$val}}_set(new_value):
+    {{$val}} = new_value
+func {{$val}}_get():
+    return {{$val}}
+
+{{- end}}
