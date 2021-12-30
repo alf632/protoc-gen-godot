@@ -1,4 +1,4 @@
-module git.alfi.li/gamelang/protoc-gen-godot
+module github.com/alf632/protoc-gen-godot
 
 go 1.16
 
