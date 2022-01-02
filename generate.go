@@ -28,10 +28,12 @@ type gdClient struct {
 }
 
 type Method struct {
-	Name     string
-	In       string
-	Out      string
-	Function string
+	Name       string
+	In         string
+	Out        string
+	RestMethod string
+	Endpoint   string
+	Fields     string
 }
 
 type Params struct {
@@ -190,7 +192,10 @@ func generateFile(p *protogen.Plugin, f *protogen.File) error {
 			}
 			fields = strings.Trim(fields, ",") + "}"
 
-			newMethod.Function = fmt.Sprintf("\"%s\",%s,%s", strings.ToUpper(restMethod), endpoint+strings.Join(params, ""), fields)
+			newMethod.RestMethod = strings.ToUpper(restMethod)
+			newMethod.Endpoint = endpoint + strings.Join(params, "")
+			newMethod.Fields = fields
+			//newMethod.Function = fmt.Sprintf("\"%s\",%s,%s", strings.ToUpper(restMethod), endpoint+strings.Join(params, ""), fields)
 			log.Print(newMethod)
 			methods = append(methods, newMethod)
 		}

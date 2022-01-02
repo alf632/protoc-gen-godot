@@ -1,23 +1,27 @@
-extends Reference
+extends Node
 {{- range $class := .Classes}}
 const {{$class.Name}} = preload("{{$class.Name}}.gd")
 {{- end}}
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+# connects the service to messaging system and websocket
+func _connect():
+{{- range $method := .Methods}}
+    Messaging.registerPublisher("/{{$.Name}}/{{$method.Name}}", self, "{{$method.Name}}")
+    Websocket.registerReceiver("{{$.Name}}:{{$method.Name}}", self)
+    Messaging.subscribe("/{{$.Name}}/do_{{$method.Name}}", self, "{{$method.Name}}")
+{{- end}}
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func receive(target, Out):
+	match target:
+{{- range $method := .Methods}}
+		"{{$.Name}}:{{$method.Name}}":
+			emit_signal("{{$method.Name}}", Out)
+{{- end}}
 
 {{- range $method := .Methods}}
+signal {{$method.Name}}(Out)
 func {{$method.Name}}(In : {{$method.In}}):
-    Websocket.send({{$method.Function}})
+    Websocket.send("{{$method.RestMethod}}",{{$method.Endpoint}},{{$method.Fields}}, "{{$.Name}}:{{$method.Name}}")
 {{- end}}
